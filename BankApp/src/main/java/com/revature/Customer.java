@@ -1,8 +1,18 @@
 package com.revature;
 
-public class Customer extends User{
+import java.util.Scanner;
 
-	private void registerCustomer() {
+public class Customer extends User{
+	
+	private String username;
+	private String password;
+
+	void registerCustomer() {
+		
+		Scanner customerInfoScanner = new Scanner(System.in);
+		username = customerInfoScanner.next();
+		password = customerInfoScanner.next();
+		customerInfoScanner.close();
 		
 	}
 	
@@ -24,5 +34,23 @@ public class Customer extends User{
 		
 		
 	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	
 	
 }
