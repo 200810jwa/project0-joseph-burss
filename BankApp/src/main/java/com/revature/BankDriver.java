@@ -8,7 +8,7 @@ import com.revature.Administrator;
 
 public class BankDriver {
 
-	
+	private static User bankUser = null;
 	
 	public static void main(String[] args) {
 		
@@ -19,7 +19,7 @@ public class BankDriver {
 		// Getting the type of user.
 		getUserType(); 
 		
-		
+	
 
 	}
 
@@ -33,22 +33,22 @@ public class BankDriver {
 		
 		if (ut == 1) {
 			
-			Customer bankUser = new Customer();
+			bankUser = new Customer();
 			System.out.println("Thank you!  We are glad you have returned. ");
 			userType.close();
 			return bankUser;
 			
 		} else if (ut == 2) {
 			
-			Employee bankUser = new Employee();
+			bankUser = new Employee();
 			System.out.println("Welcome back, valued employee!");
 			userType.close();
 			return bankUser;
 			
 		} else if (ut == 3) {
 			
-			Administrator bankUser = new Administrator();
-			System.out.println("Welcome back, Mr. Administrator.");
+			bankUser = new Administrator();
+			System.out.println("Welcome back, Administrator.");
 			userType.close();
 			return bankUser;
 		
