@@ -22,24 +22,37 @@ public class BankDriver {
 		
 		Scanner userType = new Scanner(System.in);
 		
-		if (userType.nextInt() == 1) {
+		int ut = userType.nextInt();
+		
+		if (ut == 1) {
 			
+			User bankUser = new Customer();
+			System.out.println("Thank you!  We are glad you have returned.  "
+					+ "Please enter your username and password.");
+			userType.close();
 			
+		} else if (ut == 2) {
 			
-		} else if (userType.nextInt() == 2) {
+			User bankUser = new Employee();
+			System.out.println("Welcome back, valued employee!");
+			userType.close();
+
 			
+		} else if (ut == 3) {
 			
-			
-		} else if (userType.nextInt() == 3) {
-			
-			
+			User bankUser = new Administrator();
+			System.out.println("Welcome back, Mr. Administrator.");
+			userType.close();
+
 		
 		} else {
 			
 			System.out.println("Invalid input:  Please try again.");
 			getUserType();
 		}
-		
 	}
 
+	
+	
+	
 }
