@@ -25,7 +25,7 @@ public class UserServiceTest {
 	private IUserDAO mockedDao;
 	
 	private UserService testInstance = new UserService(mockedDao);
-	private User matt;
+	private User joey;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -40,11 +40,11 @@ public class UserServiceTest {
 		MockitoAnnotations.initMocks(this);
 		testInstance = new UserService(mockedDao);
 		
-		matt = new User(1, "moberlies", "password", Role.Admin);
+		joey = new User(1, "joey", "passw0rd", Role.Admin);
 		
-		when(mockedDao.findByUsername("moberlies")).thenReturn(matt);
+		when(mockedDao.findByUsername("joey")).thenReturn(joey);
 		when(mockedDao.findByUsername(anyString())).thenReturn(null);
-		when(mockedDao.findById(1)).thenReturn(matt);
+		when(mockedDao.findById(1)).thenReturn(joey);
 		when(mockedDao.findById(anyInt())).thenReturn(null);
 		// Regardless of what input value is provided, the fake DAO will return this specific
 		// User object when the findByUsername method is invoked
@@ -56,13 +56,12 @@ public class UserServiceTest {
 
 	@Test
 	public void testLoginSuccessful() {
-		assertEquals(testInstance.login("moberlies", "password"), matt);
-//		verify(mockedDao, times(1)).findByUsername("moberlies");
+		assertEquals(testInstance.login("joey", "passw0rd"), joey);
 	}
 	
 	@Test
 	public void testLoginFailure() {
-		assertEquals(testInstance.login("moberlies", "wrongpw"), null);
+		assertEquals(testInstance.login("joey", "wrongpw"), null);
 	}
 
 	@Test

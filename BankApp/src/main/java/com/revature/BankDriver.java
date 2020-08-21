@@ -3,6 +3,7 @@ package com.revature;
 import java.util.List;
 
 import com.revature.models.Account;
+import com.revature.models.Role;
 import com.revature.models.User;
 import com.revature.repositories.AccountDAO;
 import com.revature.repositories.IAccountDAO;
@@ -20,8 +21,8 @@ public class BankDriver {
 		
 		System.out.println(allUsers);
 		
-//		User u = userService.register("becky", "pass", Role.Customer);
-//		System.out.println(u);
+		User u = userService.register("becky", "pass", Role.Customer);
+		System.out.println(u);
 		
 		allUsers = userDao.findAll();
 		System.out.println(allUsers);

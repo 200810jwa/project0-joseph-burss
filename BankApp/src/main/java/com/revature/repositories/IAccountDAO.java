@@ -3,12 +3,15 @@ package com.revature.repositories;
 import java.util.List;
 
 import com.revature.models.Account;
+import com.revature.models.User;
 
 public interface IAccountDAO {
 
 	public List<Account> findAll();
 	
 	public Account findById(int id);
+	
+	public User findByOwner(int owner);
 	
 	public int insert(Account a);
 	

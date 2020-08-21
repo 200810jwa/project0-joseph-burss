@@ -39,13 +39,13 @@ public class ConnectionUtil {
 		// "jdbc:postgresql:"
 		
 		// jdbc:postgresql://host_name:port/DB_name
-		String url = "jdbc:postgresql://training.cqkfweajco4g.us-east-2.rds.amazonaws.com:5432/jwa200810";
+		String url = "jdbc:postgresql://revature-training.ct8kaamvwwus.us-east-2.rds.amazonaws.com:5432/jwa200810";
 		
-		// We directly have our username and password of our database written directly in our sourcecode
+		// We directly have our username and password of our database written directly in our source code
 		// As soon as I push this to GitHub, we have exposed our credentials to the world
 		// Not very ideal
 		String username = "root";
-		String password = "password";
+		String password = "myPassword";
 		
 		// The better solution is to store all of this information: url, username, and password
 		// in environment variables on the computer
