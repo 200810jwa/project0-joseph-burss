@@ -39,21 +39,21 @@ public class ConnectionUtil {
 		// "jdbc:postgresql:"
 		
 		// jdbc:postgresql://host_name:port/DB_name
-		String url = "jdbc:postgresql://revature-training.ct8kaamvwwus.us-east-2.rds.amazonaws.com:5432/jwa200810";
+		// String url = "jdbc:postgresql://revature-training.ct8kaamvwwus.us-east-2.rds.amazonaws.com:5432/jwa200810";
 		
 		// We directly have our username and password of our database written directly in our source code
 		// As soon as I push this to GitHub, we have exposed our credentials to the world
 		// Not very ideal
-		String username = "root";
-		String password = "myPassword";
+		//String username = "root";
+		//String password = "myPassword";
 		
 		// The better solution is to store all of this information: url, username, and password
 		// in environment variables on the computer
 		
 		// Then inside Java we can access the environment variables
-		// String url = System.getEnv("DB_URL");
-		// String username = System.getEnv("DB_USERNAME");
-		// String password = System.getEnv("DB_PASSWORD");
+		String url = System.getenv("DB_URL");
+		String username = System.getenv("DB_USERNAME");
+		String password = System.getenv("DB_PASSWORD");
 		
 		// Additional note: If you modify your environment variables, you must restart STS
 		

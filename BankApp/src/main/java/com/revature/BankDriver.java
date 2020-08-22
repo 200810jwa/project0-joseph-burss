@@ -21,19 +21,16 @@ public class BankDriver {
 		
 		System.out.println(allUsers);
 		
-		User u = userService.register("becky", "pass", Role.Customer);
-		System.out.println(u);
-		
+		User u = userService.register(4, "waffleman", "passwoRd", "wafflesAreGood", "WithSyrup", "waffleLover@sample.com", Role.Employee);
+		User t = userService.register(3, "daBomb", "passW0rd", "Louis", "Cunningham", "loucun@sample.com", Role.Admin);
+		User w = userService.register(1, "barnacleBoy", "Passw0Rd", "Mike", "Watson", "mwatson@sample.com", Role.Customer);
+		User x = userService.register(2, "banklover", "pAssW0rd", "John", "Smith", "jsmith@sample.com", Role.Customer);
+
 		allUsers = userDao.findAll();
 		System.out.println(allUsers);
 		
 		IAccountDAO accountDao = new AccountDAO();
 		
-		int newId = accountDao.insert(new Account(0, 0, allUsers.get(1))); // A new Account for Becky
-		System.out.println(newId);
 		
-		List<Account> allAccounts = accountDao.findAll();
-		
-		System.out.println(allAccounts);
 	}
 }

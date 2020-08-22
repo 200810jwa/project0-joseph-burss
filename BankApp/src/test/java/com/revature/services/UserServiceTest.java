@@ -40,7 +40,7 @@ public class UserServiceTest {
 		MockitoAnnotations.initMocks(this);
 		testInstance = new UserService(mockedDao);
 		
-		joey = new User(1, "joey", "passw0rd", Role.Admin);
+		joey = new User(1, "joeyBankUser", "passw0rd", "Joey", "Burss", "sample2email@sample.com", Role.Admin);
 		
 		when(mockedDao.findByUsername("joey")).thenReturn(joey);
 		when(mockedDao.findByUsername(anyString())).thenReturn(null);

@@ -20,7 +20,7 @@ public class AccountDAO implements IAccountDAO {
 
 	@Override
 	public List<Account> findAll() {
-		List<User> allUsers = userDao.findAll(); // Potentially unsorted
+		List<User> allUsers = userDao.findAll();
 
 		List<Account> allAccounts = new ArrayList<>();
 
@@ -67,27 +67,25 @@ public class AccountDAO implements IAccountDAO {
 		Account acc = null;
 		try (Connection conn = ConnectionUtil.getConnection()) {
 
-			Statement stmt = conn.createStatement();
-			String sql = "SELECT * FROM project0.accounts";
+			String sql = "SELECT * FROM project0.accounts WHERE project0.accounts.id = ?";
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, id);
 
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				int myId = rs.getInt("id");
-				double balance = rs.getDouble("balance");
-				int owner = rs.getInt("owner");
-				
-				//TODO: figure out how to handle this...
-				// acc = new Account(id, balance, owner);
+				acc = new Account();
+
+				acc.setId(rs.getInt("id"));
+				acc.setBalance(rs.getDouble("balance"));
+				acc.setOwner(userDao.findById(rs.getInt("owner")));
 			}
-
-			return acc;
-
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("FAILED TO FIND USER");
+			System.out.println("FAILED TO RETRIEVE ACCOUNT");
 			return null;
 		}
+		return acc;
 
 	}
 
@@ -110,7 +108,7 @@ public class AccountDAO implements IAccountDAO {
 			}
 
 		} catch (SQLException e) {
-			
+
 			e.printStackTrace();
 			System.out.println("WE FAILED TO INSERT ACCOUNT");
 		}
@@ -120,7 +118,24 @@ public class AccountDAO implements IAccountDAO {
 
 	@Override
 	public boolean update(Account a) {
-		// TODO Auto-generated method stub
+		try (Connection conn = ConnectionUtil.getConnection()) {
+
+			String sql = "UPDATE project0.accounts SET balance = ?, owner = ? WHERE project0.accounts.id = ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+
+			stmt.setDouble(1, a.getBalance());
+			stmt.setInt(2, a.getOwner().getId());
+			stmt.setInt(3, a.getId());
+
+			if (stmt.executeUpdate(sql) != 0) {
+				return true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("FAILED TO UPDATE USER");
+		}
 		return false;
 	}
 
@@ -128,7 +143,7 @@ public class AccountDAO implements IAccountDAO {
 	public boolean delete(int id) {
 		try (Connection conn = ConnectionUtil.getConnection()) {
 
-			String sql = "DELETE FROM project0.accounts WHERE id= '" + id + "'";
+			String sql = "DELETE FROM project0.accounts WHERE project0.accounts.id = ?";
 
 			PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
@@ -144,38 +159,5 @@ public class AccountDAO implements IAccountDAO {
 			System.out.println("RECORD DELETE FAILURE");
 		}
 		return false;
-	}
-
-	@Override
-	public User findByOwner(int owner) {
-		User u = null;
-		try (Connection conn = ConnectionUtil.getConnection()) 
-		{
-		
-		Statement stmt = conn.createStatement();
-		
-		String sql = "SELECT * FROM project0.users WHERE id = '"+ owner +"'";
-		ResultSet rs = stmt.executeQuery(sql);
-		
-		while(rs.next())
-		{
-			int id = rs.getInt("id");
-			String myUsername = rs.getString("username");
-			String password = rs.getString("password");
-			Role role = Role.valueOf(rs.getString("role"));
-				
-			u = new User(id, myUsername, password, role);
-			
-		}
-		
-		return u;
-		
-		} catch (SQLException e) {
-			
-			e.printStackTrace();
-			System.out.println("Failed to find user");
-			return null;
-		}
-		
 	}
 }
