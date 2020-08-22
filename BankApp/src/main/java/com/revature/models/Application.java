@@ -6,16 +6,18 @@ public class Application {
 
 	private int id;
 	private User owner;
+	private boolean isActiveApp;
 	
 	public Application() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Application(int id, User owner) {
+	public Application(int id, User owner, boolean isActiveApp) {
 		super();
 		this.id = id;
 		this.owner = owner;
+		this.isActiveApp = isActiveApp;
 	}
 
 	public int getId() {
@@ -56,6 +58,12 @@ public class Application {
 		return "Application [id=" + id + ", owner=" + owner + "]";
 	}
 
+	public boolean isActiveApp() {
+		return isActiveApp;
+	}
 	
+	public void setActiveApp(boolean isActive) {
+		this.isActiveApp = isActive;
+	}
 	
 }

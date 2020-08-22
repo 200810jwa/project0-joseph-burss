@@ -134,7 +134,7 @@ public class AccountDAO implements IAccountDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("FAILED TO UPDATE USER");
+			System.out.println("FAILED TO UPDATE ACCOUNT");
 		}
 		return false;
 	}
@@ -150,13 +150,13 @@ public class AccountDAO implements IAccountDAO {
 			if (stmt.execute()) {
 				ResultSet rs = stmt.getGeneratedKeys();
 				rs.next();
-				System.out.println("RECORD DELETE SUCCESSFUL");
+				System.out.println("ACCOUNT DELETE SUCCESSFUL");
 				return true;
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("RECORD DELETE FAILURE");
+			System.out.println("ACCOUNT DELETE FAILURE");
 		}
 		return false;
 	}
