@@ -1,6 +1,7 @@
 package com.revature.repositories;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,7 +15,7 @@ import com.revature.utils.ConnectionUtil;
 public class ApplicationDAO implements IApplicationDAO {
 
 	private IUserDAO UserDAO = new UserDAO();
-	
+
 	@Override
 	public List<Application> findAll() {
 		List<User> allUsers = UserDAO.findAll(); // Potentially unsorted
@@ -58,26 +59,103 @@ public class ApplicationDAO implements IApplicationDAO {
 	}
 
 	@Override
-	public Application findById(int id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public int insert(Application a) {
-		// TODO Auto-generated method stub
-		return 0;
+		String sql = "INSERT INTO project0.applications (owner, active) VALUES (?, ?) RETURNING project0.applications.id";
+
+		try (Connection conn = ConnectionUtil.getConnection()) {
+			PreparedStatement stmt = conn.prepareStatement(sql);
+
+			stmt.setInt(1, a.getOwner().getId());
+			stmt.setBoolean(2, a.isActiveApp());
+
+			ResultSet rs;
+			if ((rs = stmt.executeQuery()) != null) {
+				rs.next();
+
+				int id = rs.getInt(1);
+
+				return id;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("FAILED TO INSERT APPLICATION");
+		}
+
+		return 0; // Invalid primary key
 	}
 
 	@Override
 	public boolean update(Application a) {
-		// TODO Auto-generated method stub
+		try (Connection conn = ConnectionUtil.getConnection()) {
+
+			String sql = "UPDATE project0.applications SET owner = ?, active = ? WHERE project0.application.id = ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+
+			stmt.setInt(1, a.getOwner().getId());
+			stmt.setBoolean(2, a.isActiveApp());
+			stmt.setInt(3, a.getId());
+
+			if (stmt.executeUpdate(sql) != 0) {
+				return true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("FAILED TO UPDATE APPLICATION");
+		}
 		return false;
 	}
 
 	@Override
+	public Application findById(int id) {
+		Application a = null;
+
+		try (Connection conn = ConnectionUtil.getConnection()) {
+
+			String sql = "SELECT * FROM project0.application WHERE project0.application.id = ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+
+			stmt.setInt(1, id);
+
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				a = new Application();
+
+				a.setId(rs.getInt("id"));
+				a.setOwner(UserDAO.findById(rs.getInt("owner")));
+				a.setActiveApp(rs.getBoolean("active"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("FAILED TO RETRIEVE APPLICATION");
+			return null;
+		}
+
+		return a;
+	}
+
+	@Override
 	public boolean delete(int id) {
-		// TODO Auto-generated method stub
+		try (Connection conn = ConnectionUtil.getConnection()) {
+
+			String sql = "DELETE project0.applications WHERE project0.applications.id = ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+
+			stmt.setInt(1, id);
+
+			if (stmt.executeUpdate(sql) != 0) {
+				return true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("FAILED TO DELETE APPLICATION");
+		}
 		return false;
 	}
 
