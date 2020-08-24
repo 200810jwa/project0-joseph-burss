@@ -10,6 +10,6 @@ public interface IUserDAO {
 	public User findByUsername(String username);
 	public int insert(User u);
 	public boolean update(User u);
-	public boolean delete(int userId);
+	public boolean delete(int id);
 	public User findById(int id);
 }

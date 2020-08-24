@@ -17,7 +17,7 @@ public class User {
 		// TODO Auto-generated constructor stub
 	}
 
-	public User(int id, String fir_name, String last_name, String username, String password, String email, Role role) {
+	public User(Integer id,String fir_name, String last_name, String username, String password, String email, Role role) {
 		super();
 		this.id = id;
 		this.fir_name = fir_name;

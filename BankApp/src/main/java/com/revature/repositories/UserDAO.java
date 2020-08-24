@@ -85,10 +85,10 @@ public class UserDAO implements IUserDAO {
 
 				u = new User();
 				u.setId(rs.getInt("id"));
-				u.setUsername(rs.getString("username"));
-				u.setPassword(rs.getString("password"));
 				u.setFir_name(rs.getString("first_name"));
 				u.setLast_name(rs.getString("last_name"));
+				u.setUsername(rs.getString("username"));
+				u.setPassword(rs.getString("password"));
 				u.setEmail(rs.getString("email"));
 				u.setRole(Role.valueOf(rs.getString("role")));
 			}
@@ -200,7 +200,6 @@ public class UserDAO implements IUserDAO {
 			while (rs.next()) {
 				u = new User();
 
-				u.setId(rs.getInt("id"));
 				u.setUsername(rs.getString("username"));
 				u.setPassword(rs.getString("password"));
 				u.setFir_name(rs.getString("first_name"));

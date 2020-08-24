@@ -39,19 +39,11 @@ public class UserService {
 		return null;
 	}
 
-	public User register(Integer id, String username, String password, String firstName, String lastName, String email,
+	public User register(Integer id, String firstName, String lastName, String username, String password, String email,
 			Role role) {
-		User u = new User(id, username, password, firstName, lastName, email, role);
+		User u = new User(id, firstName, lastName, username, password, email, role);
 
 		int new_id = userDao.insert(u);
-
-		if (new_id == 0) {
-			System.out.println("FAILED TO REGISTER NEW USER");
-			return null;
-			// Maybe throw a custom exception
-		}
-
-		u.setId(new_id);
 
 		return u;
 	}
