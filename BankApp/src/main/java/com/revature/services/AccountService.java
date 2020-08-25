@@ -65,10 +65,10 @@ public class AccountService {
 		}
 	}
 	
-	public boolean transfer(Account source, Account target, double amount) {
-		if (amount > 0 && source.getBalance()-amount >= 0) {
-			withdraw(source, amount);
-			deposit(source, amount);
+	public boolean transfer(Account sourceAccount, Account targetAccount, double transferAmount) {
+		if (transferAmount > 0 && sourceAccount.getBalance()-transferAmount >= 0) {
+			withdraw(sourceAccount, transferAmount);
+			deposit(targetAccount, transferAmount);
 			return true;
 		} else {
 			return false;

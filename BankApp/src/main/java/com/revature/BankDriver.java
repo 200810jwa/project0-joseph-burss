@@ -56,7 +56,6 @@ public class BankDriver {
 	private static void userRegister() {
 
 		UserService uService = new UserService();
-		IUserDAO uDAO = new UserDAO();
 		
 		System.out.println("WELCOME NEW USER!");
 		System.out.println("Please register to continue:");
@@ -95,7 +94,7 @@ public class BankDriver {
 	private static int generateUserId() {
 		
 		//Generating a random userId
-		//+1 to ensure that 0 or 1 never get chosen, reduce primary key repeat error chance.
+		//+2 to ensure that 0 or 1 never get chosen, reduce primary key repeat error chance.
 		userId = (int) ((Math.random() * 10000) + 2);
 		return userId;
 	}
@@ -103,13 +102,16 @@ public class BankDriver {
 	private static void determineUserRole(User currentUser) {
 		
 		if (currentUser.getRole() == Role.Customer) {
-			System.out.println("Welcome valued customer");
+			System.out.println("Welcome, valued customer");
+			System.out.println("===================================");
 			customerPrompt(currentUser);
 		} else if (currentUser.getRole() == Role.Employee) {
 			System.out.println("Welcome back, valued employee");
+			System.out.println("===================================");
 			employeePrompt();
 		} else if (currentUser.getRole() == Role.Admin) {
 			System.out.println("Welcome back, administrator.");
+			System.out.println("===================================");
 			adminPrompt();
 		} else {
 			System.out.println("Wait.  What?  How did you even get here?");
@@ -117,22 +119,22 @@ public class BankDriver {
 	}
 	
 	private static void customerPrompt(User currentUser) {
-		//delete these sysouts...
-		System.out.println("Inside customerPrompt...");
 		System.out.println("What do you want to do today, customer?");
 		System.out.println("=======================================");
 		System.out.println("1. apply for an account");
 		System.out.println("2. withdraw from existing account");
 		System.out.println("3. deposit into existing account");
-		System.out.println("4. transfer funds between accounts");
+		System.out.println("4. transfer funds between accounts (must have 2 or more active accounts!)");
 		System.out.println("5. Log-out");
 		
 		String input = userInput.nextLine();
 		ApplicationService appService = new ApplicationService();
 		AccountService accService = new AccountService();
+		Account currentAccount = accService.findAccount(currentUser);
 		
 		switch (input) {
 		case "1":
+			//apply 
 			appService.apply(currentUser);
 			System.out.println("Account application created!");
 			System.out.println("Awaiting approval...");
@@ -142,17 +144,30 @@ public class BankDriver {
 			customerPrompt(currentUser);
 			break;
 		case "2":
-			System.out.println("Please enter the amount you want to withdraw");
+			// withdraw
+			System.out.println("Please enter the amount you want to withdraw:");
 			double withdrawAmount = userInput.nextDouble();
-			Account currentAccount = accService.findAccount(currentUser);
 			accService.withdraw(currentAccount, withdrawAmount);
 			break;
 		case "3":
-			
+			// deposit
+			System.out.println("Please enter the amount you want to deposit into your account:");
+			double depositAmount = userInput.nextDouble();
+			if (depositAmount > 0) {
+				accService.deposit(currentAccount, depositAmount);
+			}
+			else {
+				System.out.println("Invalid deposit amount...");
+				System.out.println("Try again:");
+				depositAmount = userInput.nextDouble();
+				accService.deposit(currentAccount, depositAmount);
+			}
 			break;
 		case "4":
+			// transfer
 			break;
 		case "5":
+			//logout
 			logout(currentUser);
 			break;
 		default:
@@ -176,7 +191,7 @@ public class BankDriver {
 	
 	private static void logout(User currentUser) {
 		currentUser = null;
-		System.out.println("Goodbye!");
+		System.out.println("Goodbye!  Thank you for using [NAME REDACTED] banking services!");
 		System.out.println("Returning to main menu...");
 		System.out.println("...");
 		initialPrompt();
