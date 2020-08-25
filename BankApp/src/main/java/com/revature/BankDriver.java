@@ -18,12 +18,11 @@ public class BankDriver {
 
 	private static Scanner userInput = new Scanner(System.in);
 	private static int userId = 1;
-	
+
 	public static void main(String[] args) {
-		
+
 		initialPrompt();
 
-		
 	}
 
 	private static void initialPrompt() {
@@ -33,7 +32,7 @@ public class BankDriver {
 		System.out.println("1. Register new User.");
 		System.out.println("2. Login existing User.");
 		System.out.println("3. Exit banking application.");
-		
+
 		String input = userInput.nextLine();
 
 		switch (input) {
@@ -56,7 +55,7 @@ public class BankDriver {
 	private static void userRegister() {
 
 		UserService uService = new UserService();
-		
+
 		System.out.println("WELCOME NEW USER!");
 		System.out.println("Please register to continue:");
 		System.out.println("--------------------------------------");
@@ -73,9 +72,10 @@ public class BankDriver {
 		System.out.println("--------------------------------------");
 		System.out.println("Thank you for entering your information!");
 		System.out.println("Creating new User...");
-		
-		User newUser = uService.register(generateUserId(), firstName, lastName, userName, userPassword, userEmail, Role.Customer);
-		
+
+		User newUser = uService.register(generateUserId(), firstName, lastName, userName, userPassword, userEmail,
+				Role.Customer);
+
 		System.out.println("New user created successfully!");
 		determineUserRole(newUser);
 	}
@@ -89,18 +89,19 @@ public class BankDriver {
 		String userPassword = userInput.nextLine();
 		User returningUser = uService.login(userName, userPassword);
 		determineUserRole(returningUser);
-		}
-	
+	}
+
 	private static int generateUserId() {
-		
-		//Generating a random userId
-		//+2 to ensure that 0 or 1 never get chosen, reduce primary key repeat error chance.
+
+		// Generating a random userId
+		// +2 to ensure that 0 or 1 never get chosen, reduce primary key repeat error
+		// chance.
 		userId = (int) ((Math.random() * 10000) + 2);
 		return userId;
 	}
-	
+
 	private static void determineUserRole(User currentUser) {
-		
+
 		if (currentUser.getRole() == Role.Customer) {
 			System.out.println("Welcome, valued customer");
 			System.out.println("===================================");
@@ -108,33 +109,33 @@ public class BankDriver {
 		} else if (currentUser.getRole() == Role.Employee) {
 			System.out.println("Welcome back, valued employee");
 			System.out.println("===================================");
-			employeePrompt();
+			employeePrompt(currentUser);
 		} else if (currentUser.getRole() == Role.Admin) {
 			System.out.println("Welcome back, administrator.");
 			System.out.println("===================================");
-			adminPrompt();
+			adminPrompt(currentUser);
 		} else {
 			System.out.println("Wait.  What?  How did you even get here?");
 		}
 	}
-	
+
 	private static void customerPrompt(User currentUser) {
 		System.out.println("What do you want to do today, customer?");
 		System.out.println("=======================================");
-		System.out.println("1. apply for an account");
-		System.out.println("2. withdraw from existing account");
-		System.out.println("3. deposit into existing account");
-		System.out.println("4. transfer funds between accounts (must have 2 or more active accounts!)");
+		System.out.println("1. Apply for an account");
+		System.out.println("2. Withdraw from existing account");
+		System.out.println("3. Deposit into existing account");
+		System.out.println("4. Transfer funds between accounts (must have 2 or more active accounts!)");
 		System.out.println("5. Log-out");
-		
+
 		String input = userInput.nextLine();
 		ApplicationService appService = new ApplicationService();
 		AccountService accService = new AccountService();
 		Account currentAccount = accService.findAccount(currentUser);
-		
+
 		switch (input) {
 		case "1":
-			//apply 
+			// apply
 			appService.apply(currentUser);
 			System.out.println("Account application created!");
 			System.out.println("Awaiting approval...");
@@ -155,8 +156,7 @@ public class BankDriver {
 			double depositAmount = userInput.nextDouble();
 			if (depositAmount > 0) {
 				accService.deposit(currentAccount, depositAmount);
-			}
-			else {
+			} else {
 				System.out.println("Invalid deposit amount...");
 				System.out.println("Try again:");
 				depositAmount = userInput.nextDouble();
@@ -167,7 +167,7 @@ public class BankDriver {
 			// transfer
 			break;
 		case "5":
-			//logout
+			// logout
 			logout(currentUser);
 			break;
 		default:
@@ -178,17 +178,83 @@ public class BankDriver {
 			break;
 		}
 	}
-	
-	private static void employeePrompt() {
+
+	private static void employeePrompt(User currentUser) {
 		//
-		System.out.println("Inside employeePrompt...");
+		System.out.println("What do you want to do today, employee?");
+		System.out.println("=======================================");
+		System.out.println("1. View current customers");
+		System.out.println("2. View customer accounts");
+		System.out.println("3. Approve account applications");
+		System.out.println("4. Log-out");
+		
+		String input = userInput.nextLine();
+		ApplicationService appService = new ApplicationService();
+		AccountService accService = new AccountService();
+		Account currentAccount = accService.findAccount(currentUser);
+		UserDAO userDAO = new UserDAO();
+		
+		switch (input) {
+		case "1":
+			List<User> allUsers = userDAO.findAll();
+			System.out.println(allUsers);
+			break;
+		case "2":
+			
+			break;
+		case "3":
+			
+			break;
+		case "4":
+			logout(currentUser);
+			break;
+		default:
+			System.out.println("That was not a valid option.  Please try again.");
+			System.out.println("...");
+			System.out.println("Returning to employee menu...");
+			employeePrompt(currentUser);
+			break;
+		}
 	}
-	
-	private static void adminPrompt() {
+
+	private static void adminPrompt(User currentUser) {
 		//
-		System.out.println("Inside adminPrompt...");
+		System.out.println("What do you want to do today, administrator?");
+		System.out.println("=======================================");
+		System.out.println("1. View current customers");
+		System.out.println("2. Approve account applications");
+		System.out.println("3. Account actions");
+		System.out.println("4. Log-out");
+		
+		String input = userInput.nextLine();
+		ApplicationService appService = new ApplicationService();
+		AccountService accService = new AccountService();
+		UserDAO userDAO = new UserDAO();
+		Account currentAccount = accService.findAccount(currentUser);
+		
+		switch (input) {
+		case "1":
+			List<User> allUsers = userDAO.findAll();
+			System.out.println(allUsers);
+			break;
+		case "2":
+			
+			break;
+		case "3":
+			
+			break;
+		case "4":
+			logout(currentUser);
+			break;
+		default:
+			System.out.println("That was not a valid option.  Please try again.");
+			System.out.println("...");
+			System.out.println("Returning to admin menu...");
+			adminPrompt(currentUser);
+			break;
+		}
 	}
-	
+
 	private static void logout(User currentUser) {
 		currentUser = null;
 		System.out.println("Goodbye!  Thank you for using [NAME REDACTED] banking services!");
