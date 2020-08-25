@@ -60,7 +60,7 @@ public class ApplicationDAO implements IApplicationDAO {
 
 	@Override
 	public int insert(Application a) {
-		String sql = "INSERT INTO project0.applications (owner, active) VALUES (?, ?) RETURNING project0.applications.id";
+		String sql = "INSERT INTO project0.applications (owner, active_status) VALUES (?, ?) RETURNING project0.applications.id";
 
 		try (Connection conn = ConnectionUtil.getConnection()) {
 			PreparedStatement stmt = conn.prepareStatement(sql);

@@ -10,6 +10,8 @@ import com.revature.repositories.AccountDAO;
 import com.revature.repositories.IAccountDAO;
 import com.revature.repositories.IUserDAO;
 import com.revature.repositories.UserDAO;
+import com.revature.services.AccountService;
+import com.revature.services.ApplicationService;
 import com.revature.services.UserService;
 
 public class BankDriver {
@@ -18,7 +20,7 @@ public class BankDriver {
 	private static int userId = 1;
 	
 	public static void main(String[] args) {
-
+		
 		initialPrompt();
 
 		
@@ -43,6 +45,7 @@ public class BankDriver {
 			break;
 		case "3":
 			System.out.println("Thank you for using [NAME REDACTED] banking service!");
+			break;
 		default:
 			System.out.println("That was not a valid option.  Please try again.");
 			initialPrompt();
@@ -72,27 +75,110 @@ public class BankDriver {
 		System.out.println("Thank you for entering your information!");
 		System.out.println("Creating new User...");
 		
-		User newUser = uService.register(userId, firstName, lastName, userName, userPassword, userEmail, Role.Customer);
+		User newUser = uService.register(generateUserId(), firstName, lastName, userName, userPassword, userEmail, Role.Customer);
 		
 		System.out.println("New user created successfully!");
 		determineUserRole(newUser);
-		userId++;
 	}
 
 	private static void userLogin() {
+		UserService uService = new UserService();
 
+		System.out.println("Please enter your user name:");
+		String userName = userInput.nextLine();
+		System.out.println("Please enter your password:");
+		String userPassword = userInput.nextLine();
+		User returningUser = uService.login(userName, userPassword);
+		determineUserRole(returningUser);
+		}
+	
+	private static int generateUserId() {
+		
+		//Generating a random userId
+		//+1 to ensure that 0 or 1 never get chosen, reduce primary key repeat error chance.
+		userId = (int) ((Math.random() * 10000) + 2);
+		return userId;
 	}
 	
 	private static void determineUserRole(User currentUser) {
 		
 		if (currentUser.getRole() == Role.Customer) {
-			System.out.println("Do customer stuff here...");
+			System.out.println("Welcome valued customer");
+			customerPrompt(currentUser);
 		} else if (currentUser.getRole() == Role.Employee) {
-			System.out.println("Do employee stuff here...");
+			System.out.println("Welcome back, valued employee");
+			employeePrompt();
 		} else if (currentUser.getRole() == Role.Admin) {
-			System.out.println("Do admin stuff here...");
+			System.out.println("Welcome back, administrator.");
+			adminPrompt();
 		} else {
 			System.out.println("Wait.  What?  How did you even get here?");
 		}
+	}
+	
+	private static void customerPrompt(User currentUser) {
+		//delete these sysouts...
+		System.out.println("Inside customerPrompt...");
+		System.out.println("What do you want to do today, customer?");
+		System.out.println("=======================================");
+		System.out.println("1. apply for an account");
+		System.out.println("2. withdraw from existing account");
+		System.out.println("3. deposit into existing account");
+		System.out.println("4. transfer funds between accounts");
+		System.out.println("5. Log-out");
+		
+		String input = userInput.nextLine();
+		ApplicationService appService = new ApplicationService();
+		AccountService accService = new AccountService();
+		
+		switch (input) {
+		case "1":
+			appService.apply(currentUser);
+			System.out.println("Account application created!");
+			System.out.println("Awaiting approval...");
+			System.out.println("... returning to customer menu...");
+			System.out.println("...");
+			System.out.println("");
+			customerPrompt(currentUser);
+			break;
+		case "2":
+			System.out.println("Please enter the amount you want to withdraw");
+			double withdrawAmount = userInput.nextDouble();
+			Account currentAccount = accService.findAccount(currentUser);
+			accService.withdraw(currentAccount, withdrawAmount);
+			break;
+		case "3":
+			
+			break;
+		case "4":
+			break;
+		case "5":
+			logout(currentUser);
+			break;
+		default:
+			System.out.println("That was not a valid option.  Please try again.");
+			System.out.println("...");
+			System.out.println("Returning to customer menu...");
+			customerPrompt(currentUser);
+			break;
+		}
+	}
+	
+	private static void employeePrompt() {
+		//
+		System.out.println("Inside employeePrompt...");
+	}
+	
+	private static void adminPrompt() {
+		//
+		System.out.println("Inside adminPrompt...");
+	}
+	
+	private static void logout(User currentUser) {
+		currentUser = null;
+		System.out.println("Goodbye!");
+		System.out.println("Returning to main menu...");
+		System.out.println("...");
+		initialPrompt();
 	}
 }
