@@ -4,11 +4,10 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.revature.models.Account;
+import com.revature.models.Application;
 import com.revature.models.Role;
 import com.revature.models.User;
 import com.revature.repositories.AccountDAO;
-import com.revature.repositories.IAccountDAO;
-import com.revature.repositories.IUserDAO;
 import com.revature.repositories.UserDAO;
 import com.revature.services.AccountService;
 import com.revature.services.ApplicationService;
@@ -18,11 +17,11 @@ public class BankDriver {
 
 	private static Scanner userInput = new Scanner(System.in);
 	private static int userId = 1;
-
+	
 	public static void main(String[] args) {
 
 		initialPrompt();
-
+		userInput.close();
 	}
 
 	private static void initialPrompt() {
@@ -189,22 +188,27 @@ public class BankDriver {
 		System.out.println("4. Log-out");
 		
 		String input = userInput.nextLine();
-		ApplicationService appService = new ApplicationService();
-		AccountService accService = new AccountService();
-		Account currentAccount = accService.findAccount(currentUser);
 		UserDAO userDAO = new UserDAO();
+		//ApplicationService appService = new ApplicationService();
+		//AccountService accService = new AccountService();
+		AccountDAO accountDAO = new AccountDAO();
 		
 		switch (input) {
+		// view all customers
 		case "1":
 			List<User> allUsers = userDAO.findAll();
 			System.out.println(allUsers);
 			break;
+		// view all customer accounts
 		case "2":
-			
+			List<Account> allAccounts = accountDAO.findAll();
+			System.out.println(allAccounts);
 			break;
+		// Approve account applications
 		case "3":
-			
+			applicationProcessor();
 			break;
+		// log out
 		case "4":
 			logout(currentUser);
 			break;
@@ -223,27 +227,21 @@ public class BankDriver {
 		System.out.println("=======================================");
 		System.out.println("1. View current customers");
 		System.out.println("2. Approve account applications");
-		System.out.println("3. Account actions");
-		System.out.println("4. Log-out");
+		System.out.println("3. Log-out");
 		
 		String input = userInput.nextLine();
-		ApplicationService appService = new ApplicationService();
-		AccountService accService = new AccountService();
-		UserDAO userDAO = new UserDAO();
-		Account currentAccount = accService.findAccount(currentUser);
 		
 		switch (input) {
+		// view all customers
 		case "1":
-			List<User> allUsers = userDAO.findAll();
-			System.out.println(allUsers);
+			adminAccountActionPrompt();
 			break;
+		// approve account applications
 		case "2":
-			
+			applicationProcessor();
 			break;
+		// log out
 		case "3":
-			
-			break;
-		case "4":
 			logout(currentUser);
 			break;
 		default:
@@ -261,5 +259,78 @@ public class BankDriver {
 		System.out.println("Returning to main menu...");
 		System.out.println("...");
 		initialPrompt();
+	}
+	
+	private static void applicationProcessor() {
+		ApplicationService appService = new ApplicationService();
+
+		List<Application> activeApplications = appService.viewActiveApplications();
+		for (int i = 0; i < activeApplications.size(); i++) {
+			
+			System.out.println(activeApplications.get(i));
+			System.out.println("1. Approve application");
+			System.out.println("2. Deny application");
+			String input = userInput.next();
+			switch (input) {
+			case "1":
+				appService.approveApplication(activeApplications.get(i));
+				System.out.println("Application approved.");
+				break;
+			case "2":
+				appService.denyApplication(activeApplications.get(i));
+				System.out.println("Application denied.");
+			default:
+				break;
+			}
+			
+		}
+	}
+	
+	private static void adminAccountActionPrompt() {
+		UserDAO userDAO = new UserDAO();
+		AccountService accService = new AccountService();
+		List<User> allUsers = userDAO.findAll();
+		System.out.println(allUsers);
+		System.out.println("Who's account would you like to access?  Enter the User ID");
+		int input = userInput.nextInt();
+		User otherUser = userDAO.findById(input);
+		Account currAccount = accService.findAccount(otherUser);
+		System.out.println("This user was chosen:");
+		System.out.println(otherUser);
+		System.out.println("What do you want to do to this User's account?");
+		System.out.println("=============================================");
+		System.out.println("1. Withdraw from this account");
+		System.out.println("2. Deposit into this account");
+		System.out.println("3. Cancel this account");
+		String newAdminInput = userInput.next();
+		switch (newAdminInput) {
+		case "1":
+			System.out.println("Please enter the amount you want to withdraw:");
+			double withdrawAmount = userInput.nextDouble();
+			accService.withdraw(currAccount, withdrawAmount);
+			break;
+		case "2":
+			System.out.println("Please enter the amount you want to deposit into your account:");
+			double depositAmount = userInput.nextDouble();
+			if (depositAmount > 0) {
+				accService.deposit(currAccount, depositAmount);
+			} else {
+				System.out.println("Invalid deposit amount...");
+				System.out.println("Try again:");
+				depositAmount = userInput.nextDouble();
+				accService.deposit(currAccount, depositAmount);
+			}
+			break;
+		case "3":
+			accService.closeAccount(currAccount);
+			System.out.println("Account closed.");
+			break;
+		default:
+			System.out.println("That was not a valid input. ");
+			System.out.println("Please try again...");
+			System.out.println("...");
+			adminAccountActionPrompt();
+			break;
+		}
 	}
 }

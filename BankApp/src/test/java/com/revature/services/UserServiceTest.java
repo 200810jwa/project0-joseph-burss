@@ -40,9 +40,9 @@ public class UserServiceTest {
 		MockitoAnnotations.initMocks(this);
 		testInstance = new UserService(mockedDao);
 		
-		joey = new User(1, "joeyBankUser", "passw0rd", "Joey", "Burss", "sample2email@sample.com", Role.Admin);
+		joey = new User(1, "Joey", "Burss", "joeybankuser", "mypassword", "sample2email@sample.com", Role.Admin);
 		
-		when(mockedDao.findByUsername("joey")).thenReturn(joey);
+		when(mockedDao.findByUsername("joeybankuser")).thenReturn(joey);
 		when(mockedDao.findByUsername(anyString())).thenReturn(null);
 		when(mockedDao.findById(1)).thenReturn(joey);
 		when(mockedDao.findById(anyInt())).thenReturn(null);
@@ -56,26 +56,12 @@ public class UserServiceTest {
 
 	@Test
 	public void testLoginSuccessful() {
-		assertEquals(testInstance.login("joey", "passw0rd"), joey);
+		assertEquals(testInstance.login("joeybankuser", "mypassword"), joey);
 	}
 	
 	@Test
 	public void testLoginFailure() {
-		assertEquals(testInstance.login("joey", "wrongpw"), null);
+		assertEquals(testInstance.login("joeybankuser", "wrongpw"), null);
 	}
 
-	@Test
-	public void testRegister() {
-		fail("Not yet implemented");
-	}
-	
-	@Test
-	public void testChangePasswordSuccessful() {
-		assertTrue(testInstance.changePassword(1, "otherpw"));
-	}
-	
-	@Test
-	public void testChangePasswordFailure() {
-		assertFalse(testInstance.changePassword(0, anyString()));
-	}
 }

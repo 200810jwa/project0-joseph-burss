@@ -35,11 +35,11 @@ public class AccountService {
 	}
 	
 	public boolean closeAccount(Account a) {
-		if (a.getBalance() != 0) {
-			return false;
-		} else {
+		//if (a.getBalance() != 0) {
+		//	return false;
+		//} else {
 			return accountDAO.delete(a.getId());
-		}
+		//}
 	}
 	
 	public boolean withdraw(Account account, double accAmount) {
@@ -77,9 +77,8 @@ public class AccountService {
 	
 	public Account findAccount(User u) {
 		List <Account> accounts = accountDAO.findAll();
-		
 		for (Account acc : accounts) {
-			if (acc.getOwner().equals(u)) {
+			if (u.equals(acc.getOwner())) {
 				return acc;
 			}
 		}

@@ -62,19 +62,19 @@ public class ApplicationDAO implements IApplicationDAO {
 	public int insert(Application a) {
 		String sql = "INSERT INTO project0.applications (owner, active_status) VALUES (?, ?) RETURNING project0.applications.id";
 
-		try (Connection conn = ConnectionUtil.getConnection()) {
+		try (Connection conn = ConnectionUtil.getConnection() ){;
+
 			PreparedStatement stmt = conn.prepareStatement(sql);
 
 			stmt.setInt(1, a.getOwner().getId());
 			stmt.setBoolean(2, a.isActiveApp());
-
 			ResultSet rs;
 			if ((rs = stmt.executeQuery()) != null) {
 				rs.next();
 
-				int id = rs.getInt(1);
+				int ownerId = rs.getInt(1);
 
-				return id;
+				return ownerId;
 			}
 
 		} catch (SQLException e) {
@@ -89,7 +89,7 @@ public class ApplicationDAO implements IApplicationDAO {
 	public boolean update(Application a) {
 		try (Connection conn = ConnectionUtil.getConnection()) {
 
-			String sql = "UPDATE project0.applications SET owner = ?, active = ? WHERE project0.application.id = ?";
+			String sql = "UPDATE project0.applications SET owner = ?, active_status = ? WHERE project0.applications.id = ?";
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
 
@@ -97,7 +97,7 @@ public class ApplicationDAO implements IApplicationDAO {
 			stmt.setBoolean(2, a.isActiveApp());
 			stmt.setInt(3, a.getId());
 
-			if (stmt.executeUpdate(sql) != 0) {
+			if (stmt.executeUpdate() != 0) {
 				return true;
 			}
 
@@ -114,7 +114,7 @@ public class ApplicationDAO implements IApplicationDAO {
 
 		try (Connection conn = ConnectionUtil.getConnection()) {
 
-			String sql = "SELECT * FROM project0.application WHERE project0.application.id = ?";
+			String sql = "SELECT * FROM project0.applications WHERE project0.applications.id = ?";
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
 
@@ -127,7 +127,7 @@ public class ApplicationDAO implements IApplicationDAO {
 
 				a.setId(rs.getInt("id"));
 				a.setOwner(UserDAO.findById(rs.getInt("owner")));
-				a.setActiveApp(rs.getBoolean("active"));
+				a.setActiveApp(rs.getBoolean("active_status"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

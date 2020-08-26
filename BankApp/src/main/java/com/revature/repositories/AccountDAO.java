@@ -5,12 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.revature.models.Account;
-import com.revature.models.Role;
 import com.revature.models.User;
 import com.revature.utils.ConnectionUtil;
 
@@ -128,7 +126,7 @@ public class AccountDAO implements IAccountDAO {
 			stmt.setInt(2, a.getOwner().getId());
 			stmt.setInt(3, a.getId());
 
-			if (stmt.executeUpdate(sql) != 0) {
+			if (stmt.executeUpdate() != 0) {
 				return true;
 			}
 
@@ -147,7 +145,7 @@ public class AccountDAO implements IAccountDAO {
 
 			PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-			if (stmt.execute()) {
+			if (stmt.executeQuery(sql) != null) {
 				ResultSet rs = stmt.getGeneratedKeys();
 				rs.next();
 				System.out.println("ACCOUNT DELETE SUCCESSFUL");
